@@ -1,4 +1,4 @@
-"""Trace the approved final logo mark (symbol only) into SVG masters."""
+"""Pixel-faithful trace of the approved final logo into SVG masters + PNG masters."""
 from __future__ import annotations
 
 from pathlib import Path
@@ -9,42 +9,61 @@ from PIL import Image
 from potrace import Bitmap
 
 ROOT = Path(__file__).resolve().parent
-SRC = ROOT / "variants" / "_source-final-logo.jpg"
+SRC_PNG = ROOT / "variants" / "_source-final-logo.png"
+SRC_JPG = ROOT / "variants" / "_source-final-logo.jpg"
 OUT = ROOT / "svg"
 PUBLIC = ROOT.parent / "public"
+VAR = ROOT / "variants"
 
 NAVY = "#0B243B"
 ORANGE = "#F19E38"
 PAPER = "#F5F3ED"
 BLACK = "#000000"
 WHITE = "#FFFFFF"
+NAVY_RGB = (11, 36, 59)
+ORANGE_RGB = (241, 158, 56)
+PAPER_RGB = (245, 243, 237)
 
 
-def load_mark_bitmap() -> tuple[np.ndarray, np.ndarray]:
-    im = Image.open(SRC).convert("RGBA")
-    a = np.array(im)
-    rgb = a[:, :, :3].astype(np.float32)
-    alpha = a[:, :, 3]
-    # Navy ink (dark)
-    navy = (rgb.mean(axis=2) < 95) & (alpha > 200)
-    # Orange accent tip
-    orange = (rgb[:, :, 0] > 180) & (rgb[:, :, 1] < 160) & (rgb[:, :, 2] < 100) & (alpha > 200)
-    ink = navy | orange
+def load_source() -> Image.Image:
+    path = SRC_PNG if SRC_PNG.exists() else SRC_JPG
+    return Image.open(path).convert("RGB")
+
+
+def color_masks(rgb: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    """Separate navy ink and signal tip from paper background."""
+    dark = rgb.mean(axis=2) < 90
+    orange = (
+        (rgb[:, :, 0] > 170)
+        & (rgb[:, :, 1] < 175)
+        & (rgb[:, :, 2] < 130)
+        & (rgb[:, :, 0] > rgb[:, :, 1] + 15)
+    )
+    return dark, orange
+
+
+def ink_bbox(ink: np.ndarray) -> tuple[int, int, int, int]:
     ys, xs = np.where(ink)
-    crop = ink[int(ys.min()) : int(ys.max()) + 1, int(xs.min()) : int(xs.max()) + 1]
-    # Drop wordmark band (bottom ~28%)
-    h, w = crop.shape
-    mark = crop[: int(h * 0.70), :]
-    orange_crop = orange[int(ys.min()) : int(ys.max()) + 1, int(xs.min()) : int(xs.max()) + 1][: int(h * 0.70), :]
-    ch, cw = mark.shape
-    pad = 36
-    side = max(ch, cw) + pad * 2
+    return int(ys.min()), int(ys.max()) + 1, int(xs.min()), int(xs.max()) + 1
+
+
+def find_mark_cut(full: np.ndarray) -> int:
+    """Split mark (top) from wordmark (bottom) at the empty gap."""
+    dens = full.sum(axis=1)
+    half = len(dens) // 2
+    for i in range(half, len(dens)):
+        if dens[i] < full.shape[1] * 0.015:
+            return i
+    return int(len(dens) * 0.72)
+
+
+def pad_square(mask: np.ndarray, pad: int = 28) -> np.ndarray:
+    h, w = mask.shape
+    side = max(h, w) + pad * 2
     sq = np.zeros((side, side), dtype=bool)
-    oq = np.zeros((side, side), dtype=bool)
-    oy, ox = (side - ch) // 2, (side - cw) // 2
-    sq[oy : oy + ch, ox : ox + cw] = mark
-    oq[oy : oy + ch, ox : ox + cw] = orange_crop
-    return sq, oq
+    oy, ox = (side - h) // 2, (side - w) // 2
+    sq[oy : oy + h, ox : ox + w] = mask
+    return sq
 
 
 def curve_points(curve: potrace.Curve) -> list[tuple[float, float]]:
@@ -60,32 +79,31 @@ def curve_points(curve: potrace.Curve) -> list[tuple[float, float]]:
     return [(p.x, p.y) for p in pts]
 
 
-def touches_border(curve: potrace.Curve, side: int, margin: float = 2.0) -> bool:
-    for x, y in curve_points(curve):
-        if x <= margin or y <= margin or x >= side - margin or y >= side - margin:
-            return True
-    return False
+def touches_border(curve: potrace.Curve, side: int, margin: float = 1.5) -> bool:
+    return any(
+        x <= margin or y <= margin or x >= side - margin or y >= side - margin
+        for x, y in curve_points(curve)
+    )
 
 
 def curves_to_d(path: potrace.Path, scale: float, side: int) -> str:
     parts: list[str] = []
     for curve in path:
-        # Drop outer frame / full-bleed invert paths
         if touches_border(curve, side):
             continue
         sp = curve.start_point
-        segs = [f"M{sp.x / scale:.2f} {sp.y / scale:.2f}"]
+        segs = [f"M{sp.x / scale:.3f} {sp.y / scale:.3f}"]
         for seg in curve.segments:
             if seg.is_corner:
                 segs.append(
-                    f"L{seg.c.x / scale:.2f} {seg.c.y / scale:.2f} "
-                    f"L{seg.end_point.x / scale:.2f} {seg.end_point.y / scale:.2f}"
+                    f"L{seg.c.x / scale:.3f} {seg.c.y / scale:.3f} "
+                    f"L{seg.end_point.x / scale:.3f} {seg.end_point.y / scale:.3f}"
                 )
             else:
                 segs.append(
-                    f"C{seg.c1.x / scale:.2f} {seg.c1.y / scale:.2f} "
-                    f"{seg.c2.x / scale:.2f} {seg.c2.y / scale:.2f} "
-                    f"{seg.end_point.x / scale:.2f} {seg.end_point.y / scale:.2f}"
+                    f"C{seg.c1.x / scale:.3f} {seg.c1.y / scale:.3f} "
+                    f"{seg.c2.x / scale:.3f} {seg.c2.y / scale:.3f} "
+                    f"{seg.end_point.x / scale:.3f} {seg.end_point.y / scale:.3f}"
                 )
         segs.append("Z")
         parts.append(" ".join(segs))
@@ -93,22 +111,22 @@ def curves_to_d(path: potrace.Path, scale: float, side: int) -> str:
 
 
 def trace_bitmap(mask: np.ndarray) -> str:
+    """High-fidelity / pixel-faithful potrace."""
     side = mask.shape[0]
-    scale = side / 100
+    scale = side / 100.0
     bmp = Bitmap(mask)
     path = bmp.trace(
-        turdsize=18,
+        turdsize=4,
         turnpolicy=potrace.POTRACE_TURNPOLICY_MINORITY,
-        alphamax=0.9,
+        alphamax=1.0,
         opticurve=True,
-        opttolerance=0.2,
+        opttolerance=0.12,
     )
     return curves_to_d(path, scale, side)
 
 
 def svg_mark(navy_d: str, orange_d: str, *, navy: str, accent: str, label: str) -> str:
-    # When mono, merge orange into navy fill
-    if accent == navy:
+    if accent == navy or not orange_d:
         d = f"{navy_d} {orange_d}".strip()
         return f'''<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="{label}">
@@ -162,23 +180,109 @@ def lockup_s(inner: str, fill: str) -> str:
 '''
 
 
+def paint_rgba(navy_m: np.ndarray, orange_m: np.ndarray) -> Image.Image:
+    h, w = navy_m.shape
+    rgba = np.zeros((h, w, 4), dtype=np.uint8)
+    rgba[navy_m] = (*NAVY_RGB, 255)
+    rgba[orange_m] = (*ORANGE_RGB, 255)
+    return Image.fromarray(rgba, "RGBA")
+
+
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
-    ink, orange = load_mark_bitmap()
-    # Preview bins
-    Image.fromarray((~ink).astype(np.uint8) * 255).save(ROOT / "variants" / "_final-mark-bin.png")
-    Image.fromarray((~orange).astype(np.uint8) * 255).save(ROOT / "variants" / "_final-orange-bin.png")
+    VAR.mkdir(parents=True, exist_ok=True)
+    PUBLIC.mkdir(parents=True, exist_ok=True)
 
-    # Navy-only = ink minus orange tip (so tip can be recolored)
-    navy_mask = ink & ~orange
-    # Keep a little connectivity: if orange empty, use full ink
-    if orange.sum() < 30:
-        navy_mask = ink
-        orange_d = ""
-        navy_d = trace_bitmap(navy_mask)
-    else:
-        navy_d = trace_bitmap(navy_mask)
-        orange_d = trace_bitmap(orange)
+    src = load_source()
+    rgb = np.array(src)
+    dark, orange = color_masks(rgb)
+    ink = dark | orange
+    y0, y1, x0, x1 = ink_bbox(ink)
+    full = ink[y0:y1, x0:x1]
+    orange_c = orange[y0:y1, x0:x1]
+    cut = find_mark_cut(full)
+
+    mark = full[:cut]
+    omark = orange_c[:cut]
+    navy_m = mark & ~omark
+
+    # Full logo crop (mark + wordmark) — exact pixel master
+    full_navy = (dark & ~orange)[y0:y1, x0:x1]
+    full_orange = orange[y0:y1, x0:x1]
+    paint_rgba(full_navy, full_orange).save(VAR / "as-lockup-stacked-exact.png")
+    paint_rgba(navy_m, omark).save(VAR / "as-mark-exact.png")
+
+    # Binary previews
+    Image.fromarray((~pad_square(navy_m | omark)).astype(np.uint8) * 255).save(VAR / "_final-mark-bin.png")
+    Image.fromarray((~pad_square(omark)).astype(np.uint8) * 255).save(VAR / "_final-orange-bin.png")
+
+    sq_n = pad_square(navy_m)
+    sq_o = pad_square(omark)
+    navy_d = trace_bitmap(sq_n)
+    orange_d = trace_bitmap(sq_o) if omark.sum() > 20 else ""
+
+    # Also trace full stacked lockup (mark + wordmark) as one SVG
+    sq_full_n = pad_square(full_navy, pad=40)
+    # taller canvas for wordmark
+    fh, fw = full_navy.shape
+    side_h = int(max(fh, fw) * 1.08) + 80
+    side_w = int(max(fh, fw) * 1.08) + 80
+    # keep aspect of full lockup
+    canvas_n = np.zeros((side_h, side_w), dtype=bool)
+    canvas_o = np.zeros((side_h, side_w), dtype=bool)
+    oy = (side_h - fh) // 2
+    ox = (side_w - fw) // 2
+    canvas_n[oy : oy + fh, ox : ox + fw] = full_navy
+    canvas_o[oy : oy + fh, ox : ox + fw] = full_orange
+    # viewBox matching aspect
+    aspect_w = 100
+    aspect_h = 100 * side_h / side_w
+    scale_full = side_w / 100.0
+
+    def trace_to_d(mask: np.ndarray, scale: float) -> str:
+        side = max(mask.shape)
+        bmp = Bitmap(mask)
+        path = bmp.trace(
+            turdsize=4,
+            turnpolicy=potrace.POTRACE_TURNPOLICY_MINORITY,
+            alphamax=1.0,
+            opticurve=True,
+            opttolerance=0.12,
+        )
+        return curves_to_d(path, scale, mask.shape[1] if mask.shape[1] >= mask.shape[0] else mask.shape[0])
+
+    # For full lockup, scale by width
+    full_navy_d = curves_to_d(
+        Bitmap(canvas_n).trace(
+            turdsize=4,
+            turnpolicy=potrace.POTRACE_TURNPOLICY_MINORITY,
+            alphamax=1.0,
+            opticurve=True,
+            opttolerance=0.12,
+        ),
+        scale_full,
+        max(side_h, side_w),
+    )
+    full_orange_d = curves_to_d(
+        Bitmap(canvas_o).trace(
+            turdsize=2,
+            turnpolicy=potrace.POTRACE_TURNPOLICY_MINORITY,
+            alphamax=1.0,
+            opticurve=True,
+            opttolerance=0.12,
+        ),
+        scale_full,
+        max(side_h, side_w),
+    )
+    stacked_exact = f'''<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {aspect_w:.2f} {aspect_h:.2f}" role="img" aria-label="Allround Systems lockup stacked — traced">
+  <title>Allround Systems lockup stacked — traced</title>
+  <path fill="{NAVY}" fill-rule="evenodd" d="{full_navy_d}"/>
+  <path fill="{ORANGE}" fill-rule="evenodd" d="{full_orange_d}"/>
+</svg>
+'''
+    (OUT / "as-lockup-stacked-traced.svg").write_text(stacked_exact, encoding="utf-8")
+    print("wrote as-lockup-stacked-traced.svg")
 
     variants = {
         "as-mark.svg": (NAVY, ORANGE, "Allround Systems mark"),
@@ -221,7 +325,6 @@ def main() -> None:
 '''
     (OUT / "as-favicon.svg").write_text(fav, encoding="utf-8")
 
-    PUBLIC.mkdir(parents=True, exist_ok=True)
     (PUBLIC / "brand-mark-black.svg").write_text(
         svg_mark(navy_d, orange_d, navy=BLACK, accent=BLACK, label="Allround Systems mark — black"),
         encoding="utf-8",
@@ -229,6 +332,8 @@ def main() -> None:
     (PUBLIC / "brand-app-icon.svg").write_text(app, encoding="utf-8")
     (PUBLIC / "icon.svg").write_text(fav, encoding="utf-8")
     (PUBLIC / "logo.svg").write_text(lockup_h(inner, NAVY), encoding="utf-8")
+    paint_rgba(navy_m, omark).save(PUBLIC / "brand-mark.png")
+    paint_rgba(full_navy, full_orange).save(PUBLIC / "brand-lockup-stacked.png")
     print("public mirrors updated")
 
 

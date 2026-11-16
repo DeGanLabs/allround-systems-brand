@@ -1,19 +1,21 @@
 ﻿# Allround Systems — Brand Identity Guidelines
 
-Public brand kit for **Allround Systems UG**. Independent identity.
+Pixel-faithful brand kit for **Allround Systems UG**. Independent identity.
 
 **Live:** https://deganlabs.github.io/allround-systems-brand/
+
+## Source of truth
+
+`variants/_source-final-logo.png` — approved final logo artwork.
+Rebuild vectors: `python trace_final_logo.py`
 
 ## Contents
 
 - `index.html` — brand identity guidelines
-- `svg/` — mark, lockups, favicon, app icon
+- `svg/` — traced mark, lockups, favicon, app icon
+- `svg/as-lockup-stacked-traced.svg` — full lockup traced from the approved artwork
+- `variants/as-mark-exact.png` / `as-lockup-stacked-exact.png` — exact pixel masters
 - `tokens.css` — color tokens
-- `trace_final_logo.py` — rebuild SVGs from the approved final logo artwork
-
-## Mark
-
-Gear (systems) + 360° arrow (all-round) + AS monogram. Signal orange on the arrow tip only.
 
 ## Colors
 

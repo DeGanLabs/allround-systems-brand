@@ -113,7 +113,7 @@
 <body>
   <div class="container">
     <header class="hero">
-      <p class="kicker" style="color:var(--slate)">Brand Identity Guidelines · v2.0 · November 2026</p>
+      <p class="kicker" style="color:var(--slate)">Brand Identity Guidelines · v2.1 · November 2026</p>
       <div class="hero-row">
         <div class="hero-copy">
           <h1>Allround Systems</h1>
@@ -121,12 +121,16 @@
             Gear + 360° motion. One partner. Every system.
           </p>
           <p style="margin-top:14px">
-            The official mark combines a continuous <strong>AS</strong> monogram with a circular frame:
-            gear teeth for systems and mechanics, a rotation arrow for all-round coverage.
-            Signal orange appears only on the arrow tip.
+            Masters are a <strong>pixel-faithful trace</strong> of the approved final logo —
+            continuous <strong>AS</strong> monogram, gear teeth, 360° arrow. Signal orange on the tip only.
           </p>
+          <div class="download-row" style="margin-top:16px">
+            <a class="download accent" href="svg/as-mark-color.svg" download>Mark SVG</a>
+            <a class="download" href="svg/as-lockup-stacked-traced.svg" download>Full lockup SVG</a>
+            <a class="download" href="variants/as-lockup-stacked-exact.png" download>Exact PNG</a>
+          </div>
         </div>
-        <img class="mark-lg" src="svg/as-mark-color.svg" alt="Allround Systems mark" />
+        <img class="lockup-s" src="variants/as-lockup-stacked-exact.png" alt="Allround Systems lockup" style="width:200px;background:var(--paper)" />
       </div>
     </header>
 
@@ -147,15 +151,33 @@
       <div class="kicker">02 — Construction</div>
       <h2>Mark anatomy</h2>
       <p>
-        Masters are traced from the approved final logo artwork. ViewBox <code>0 0 100 100</code>.
-        Rebuild with <code>python brand/trace_final_logo.py</code> from
-        <code>brand/variants/_source-final-logo.jpg</code>.
+        Source of truth: <code>variants/_source-final-logo.png</code> (approved final artwork).
+        Mark viewBox <code>0 0 100 100</code>. Rebuild with
+        <code>python brand/trace_final_logo.py</code> — high-fidelity potrace, not a redraw.
       </p>
-      <ul class="rules do">
+      <div class="grid grid-2" style="margin-top:18px">
+        <div class="tile">
+          <div class="tile-stage bg-paper"><img class="mark" src="variants/as-mark-exact.png" alt="" /></div>
+          <div class="tile-meta">
+            <h3>Exact mark (pixel)</h3>
+            <p>Color-keyed from the approved PNG</p>
+            <div class="download-row"><a class="download" href="variants/as-mark-exact.png" download>PNG</a></div>
+          </div>
+        </div>
+        <div class="tile">
+          <div class="tile-stage bg-paper"><img class="mark" src="svg/as-mark-color.svg" alt="" /></div>
+          <div class="tile-meta">
+            <h3>Traced mark (vector)</h3>
+            <p>Pixel-faithful SVG of the same artwork</p>
+            <div class="download-row"><a class="download" href="svg/as-mark-color.svg" download>SVG</a></div>
+          </div>
+        </div>
+      </div>
+      <ul class="rules do" style="margin-top:18px">
         <li>Outer frame = gear (bottom) + continuous arc ending in a 360° arrow</li>
         <li>Arrow tip is always Signal orange on color / reversed / app-icon variants</li>
         <li>AS monogram stays navy (or paper/white on dark); never orange</li>
-        <li>Prefer SVG masters; rasterize from them — do not redraw by hand</li>
+        <li>Do not redraw — always regenerate from the approved source PNG</li>
       </ul>
     </section>
 
@@ -249,11 +271,14 @@
           </div>
         </div>
         <div class="tile">
-          <div class="tile-stage bg-paper"><img class="lockup-s" src="svg/as-lockup-stacked-light.svg" alt="" /></div>
+          <div class="tile-stage bg-paper"><img class="lockup-s" src="svg/as-lockup-stacked-traced.svg" alt="" /></div>
           <div class="tile-meta">
-            <h3>Stacked</h3>
-            <p>Square placements, splash screens, workwear chest</p>
-            <div class="download-row"><a class="download" href="svg/as-lockup-stacked-light.svg" download>SVG</a></div>
+            <h3>Stacked — traced (primary)</h3>
+            <p>Exact wordmark + mark from approved artwork</p>
+            <div class="download-row">
+              <a class="download accent" href="svg/as-lockup-stacked-traced.svg" download>SVG</a>
+              <a class="download" href="variants/as-lockup-stacked-exact.png" download>PNG</a>
+            </div>
           </div>
         </div>
         <div class="tile">
