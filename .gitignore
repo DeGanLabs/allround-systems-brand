@@ -1,0 +1,14 @@
+﻿node_modules/
+.DS_Store
+__pycache__/
+*.pyc
+_analyze*
+_grid*
+_mono-*
+_split*
+_square*
+_traced*
+_source-mark-bin*
+_source-mark-square*
+compare.html
+svg/_*.svg

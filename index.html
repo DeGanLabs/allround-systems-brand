@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Allround Systems — Brand Identity Guidelines</title>
+  <link rel="icon" href="svg/as-favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="tokens.css" />
+  <style>
+    :root {
+      --navy: var(--as-navy, #0B243B);
+      --orange: var(--as-orange, #F19E38);
+      --paper: var(--as-paper, #F5F3ED);
+      --night: var(--as-night, #071521);
+      --slate: var(--as-slate, #5A6570);
+      --mist: var(--as-mist, #C8CDD2);
+      --hairline: #E4E2DC;
+      --white: #fff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, "Segoe UI", system-ui, sans-serif;
+      background: var(--paper);
+      color: var(--navy);
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+    .container { max-width: 1060px; margin: 0 auto; padding: 0 28px 96px; }
+    h1 { font-size: 44px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.1; margin: 0; }
+    h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.01em; margin: 0 0 6px; }
+    h3 { font-size: 15px; font-weight: 600; margin: 0 0 4px; }
+    p { margin: 0 0 12px; max-width: 68ch; }
+    .muted { color: var(--slate); }
+    .small { font-size: 13px; }
+    .section { padding: 56px 0 8px; border-top: 1px solid var(--hairline); margin-top: 48px; }
+    .section:first-of-type { border-top: 0; margin-top: 0; }
+    .kicker {
+      font-size: 12px; font-weight: 600; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--orange); margin-bottom: 10px;
+    }
+    .hero { padding: 84px 0 30px; }
+    .hero-row { display: flex; gap: 48px; align-items: center; flex-wrap: wrap; }
+    .hero-copy { flex: 1; min-width: 300px; }
+    .grid { display: grid; gap: 18px; }
+    .grid-2 { grid-template-columns: repeat(2, 1fr); }
+    .grid-3 { grid-template-columns: repeat(3, 1fr); }
+    .grid-4 { grid-template-columns: repeat(4, 1fr); }
+    @media (max-width: 860px) {
+      .grid-3, .grid-4 { grid-template-columns: repeat(2, 1fr); }
+      h1 { font-size: 34px; }
+    }
+    @media (max-width: 540px) {
+      .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    }
+    .tile { border: 1px solid var(--hairline); border-radius: 10px; overflow: hidden; background: var(--white); }
+    .tile-stage { display: flex; align-items: center; justify-content: center; min-height: 170px; padding: 24px; position: relative; }
+    .tile-meta { border-top: 1px solid var(--hairline); padding: 10px 14px 12px; background: var(--white); }
+    .tile-meta h3 { font-size: 13px; }
+    .tile-meta p { font-size: 12px; color: var(--slate); margin: 0; }
+    .bg-paper { background: var(--paper); }
+    .bg-night { background: var(--night); }
+    .bg-navy { background: var(--navy); }
+    .bg-orange { background: var(--orange); }
+    .bg-white { background: var(--white); }
+    .download-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+    .download {
+      display: inline-block; padding: 5px 12px;
+      border: 1px solid var(--navy); border-radius: 999px;
+      color: var(--navy); text-decoration: none;
+      font-size: 12px; font-weight: 600; background: transparent;
+    }
+    .download:hover { background: var(--navy); color: var(--paper); }
+    .download.accent { border-color: var(--orange); color: var(--orange); }
+    .download.accent:hover { background: var(--orange); color: #fff; border-color: var(--orange); }
+    .mark { width: 96px; height: 96px; display: block; }
+    .mark-lg { width: 140px; height: 140px; }
+    .lockup-h { width: min(360px, 100%); height: auto; display: block; }
+    .lockup-s { width: 160px; height: auto; display: block; }
+    .swatch-chip { height: 84px; border-radius: 8px; border: 1px solid var(--hairline); }
+    .swatch h3 { margin-top: 8px; }
+    .swatch p { font-size: 12px; color: var(--slate); margin: 0; }
+    .scale-strip {
+      display: flex; align-items: flex-end; gap: 40px; flex-wrap: wrap;
+      padding: 26px 24px; border: 1px solid var(--hairline); border-radius: 10px; background: var(--white);
+    }
+    .scale-item { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+    .scale-item span { font-size: 12px; color: var(--slate); }
+    table { border-collapse: collapse; width: 100%; max-width: 720px; font-size: 14px; }
+    th, td { text-align: left; padding: 9px 14px 9px 0; border-bottom: 1px solid var(--hairline); }
+    th { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--slate); font-weight: 600; }
+    code { font-family: ui-monospace, Consolas, monospace; font-size: 0.9em; background: #efefec; padding: 1px 6px; border-radius: 4px; }
+    ul.rules { list-style: none; padding: 0; margin: 8px 0 0; max-width: 68ch; }
+    ul.rules li { padding: 7px 0 7px 26px; position: relative; border-bottom: 1px solid var(--hairline); font-size: 14px; }
+    ul.rules li:last-child { border-bottom: 0; }
+    ul.rules li::before { position: absolute; left: 2px; font-weight: 700; }
+    ul.do li::before { content: '+'; color: var(--navy); }
+    ul.dont li::before { content: '\00d7'; color: var(--orange); }
+    .badge { position: absolute; top: 10px; left: 10px; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; color: var(--orange); }
+    .compare {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 18px;
+    }
+    .compare img, .compare object { width: 180px; height: 180px; object-fit: contain; }
+    .wordmark-sample {
+      font-weight: 700; letter-spacing: 0.14em; font-size: 28px; line-height: 1.15;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="hero">
+      <p class="kicker" style="color:var(--slate)">Brand Identity Guidelines · v1.0 · November 2026</p>
+      <div class="hero-row">
+        <div class="hero-copy">
+          <h1>Allround Systems<br />The ring completes the mark</h1>
+          <p style="margin-top:18px">
+            An interlocking <strong>AS</strong> sits inside a broken ring — eight segments around one continuous system.
+            One segment carries Signal orange; everything else is Navy. The ring is the “all-round”:
+            multi-service coverage in Munich, held together as one identity.
+          </p>
+        </div>
+        <img class="mark-lg" src="svg/as-mark-color.svg" alt="Allround Systems mark" />
+      </div>
+    </header>
+
+    <section class="section">
+      <div class="kicker">01 — Brand idea</div>
+      <h2>One mark, all-round service</h2>
+      <p>
+        The monogram locks A and S into a single stroke path. The segmented ring frames it like a system dial —
+        complete coverage without a closed loop that would feel sealed or exclusive.
+      </p>
+      <p>
+        <strong>Signal orange appears only once</strong> — on the top-right ring segment. The wordmark never carries orange.
+        Two inks maximum on any approved lockup.
+      </p>
+    </section>
+
+    <section class="section">
+      <div class="kicker">02 — Construction</div>
+      <h2>Geometry</h2>
+      <p>
+        <strong>AS</strong> is pixel-traced from the official mono PNG. The ring is a <strong>perfect geometric
+        circle</strong> with eight equal gaps cut out (not traced). ViewBox <code>0 0 100 100</code>.
+        Signal orange sits on the top-right segment for color variants only.
+      </p>
+      <ul class="rules do">
+        <li>Rebuild SVGs with <code>python brand/trace_mark.py</code> from <code>_source-mark.png</code></li>
+        <li>Accent segment is always the top-right arc — never recolored or moved</li>
+        <li>Proportions are locked — do not redraw by hand</li>
+        <li>Prefer the SVG masters; rasterize from them, never reverse-engineer from screenshots</li>
+      </ul>
+
+      <div class="compare">
+        <div class="tile">
+          <div class="tile-stage bg-white">
+            <img src="_source-mark.png" alt="Source bitmap" style="width:180px;height:180px;object-fit:contain" />
+          </div>
+          <div class="tile-meta"><h3>Source bitmap</h3><p>Provided mono master</p></div>
+        </div>
+        <div class="tile">
+          <div class="tile-stage bg-white">
+            <img class="mark-lg" src="svg/as-mark-black.svg" alt="Pixel-traced SVG" />
+          </div>
+          <div class="tile-meta"><h3>Pixel-traced SVG</h3><p>Potrace from source PNG</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="kicker">03 — Color variants</div>
+      <h2>Approved variants</h2>
+      <div class="grid grid-2" style="margin-top:18px">
+        <div class="tile">
+          <div class="tile-stage bg-paper"><img class="mark" src="svg/as-mark-color.svg" alt="" /></div>
+          <div class="tile-meta">
+            <h3>Color — primary</h3>
+            <p>Navy + Signal on light surfaces</p>
+            <div class="download-row">
+              <a class="download" href="svg/as-mark-color.svg" download>SVG</a>
+            </div>
+          </div>
+        </div>
+        <div class="tile">
+          <div class="tile-stage bg-paper"><img class="mark" src="svg/as-mark-mono.svg" alt="" /></div>
+          <div class="tile-meta">
+            <h3>Monochrome</h3>
+            <p>Single-ink navy print</p>
+            <div class="download-row"><a class="download" href="svg/as-mark-mono.svg" download>SVG</a></div>
+          </div>
+        </div>
+        <div class="tile">
+          <div class="tile-stage bg-navy"><img class="mark" src="svg/as-mark-reversed.svg" alt="" /></div>
+          <div class="tile-meta">
+            <h3>Reversed</h3>
+            <p>Dark mode, night OOH — white + Signal</p>
+            <div class="download-row"><a class="download" href="svg/as-mark-reversed.svg" download>SVG</a></div>
+          </div>
+        </div>
+        <div class="tile">
+          <div class="tile-stage bg-orange"><img class="mark" src="svg/as-mark-on-signal.svg" alt="" /></div>
+          <div class="tile-meta">
+            <h3>On Signal</h3>
+            <p>Brand-color fields, events, merch</p>
+            <div class="download-row"><a class="download" href="svg/as-mark-on-signal.svg" download>SVG</a></div>
+          </div>
+        </div>
+      </div>
+      <p class="small muted" style="margin-top:14px">
+        Also available: pure <a href="svg/as-mark-black.svg">black</a> and
+        <a href="svg/as-mark-white.svg">white</a> for single-ink and photographic backgrounds.
+      </p>
+    </section>
+
+    <section class="section">
+      <div class="kicker">03b — Social &amp; app</div>
+      <h2>Ready for profiles</h2>
+      <div class="grid grid-3" style="margin-top:18px">
+        <div class="tile">
+          <div class="tile-stage bg-paper"><img class="mark" src="svg/as-app-icon.svg" alt="" style="border-radius:22px" /></div>
+          <div class="tile-meta">
+            <h3>App icon — recommended</h3>
+            <p>Navy tile, reversed mark</p>
+            <div class="download-row"><a class="download accent" href="svg/as-app-icon.svg" download>SVG</a></div>
+          </div>
+        </div>
+        <div class="tile">
+          <div class="tile-stage bg-paper"><img class="mark" src="svg/as-mark-color.svg" alt="" /></div>
+          <div class="tile-meta">
+            <h3>Profile — light</h3>
+            <p>Paper + color mark</p>
+            <div class="download-row"><a class="download" href="svg/as-mark-color.svg" download>SVG</a></div>
+          </div>
+        </div>
+        <div class="tile">
+          <div class="tile-stage bg-navy"><img class="mark" src="svg/as-mark-reversed.svg" alt="" /></div>
+          <div class="tile-meta">
+            <h3>Profile — dark</h3>
+            <p>Navy + reversed mark</p>
+            <div class="download-row"><a class="download" href="svg/as-mark-reversed.svg" download>SVG</a></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="kicker">04 — Lockups</div>
+      <h2>Symbol, horizontal, stacked</h2>
+      <div class="grid grid-2" style="margin-top:18px">
+        <div class="tile">
+          <div class="tile-stage bg-paper"><img class="lockup-h" src="svg/as-lockup-horizontal-light.svg" alt="" /></div>
+          <div class="tile-meta">
+            <h3>Horizontal — default</h3>
+            <p>Websites, documents, email signatures</p>
+            <div class="download-row">
+              <a class="download" href="svg/as-lockup-horizontal-light.svg" download>SVG light</a>
+              <a class="download" href="svg/as-lockup-horizontal-dark.svg" download>SVG dark</a>
+            </div>
+          </div>
+        </div>
+        <div class="tile">
+          <div class="tile-stage bg-paper"><img class="lockup-s" src="svg/as-lockup-stacked-light.svg" alt="" /></div>
+          <div class="tile-meta">
+            <h3>Stacked</h3>
+            <p>Square placements, splash screens</p>
+            <div class="download-row"><a class="download" href="svg/as-lockup-stacked-light.svg" download>SVG</a></div>
+          </div>
+        </div>
+        <div class="tile">
+          <div class="tile-stage bg-paper"><img class="mark" src="svg/as-mark-color.svg" alt="" /></div>
+          <div class="tile-meta">
+            <h3>Symbol only</h3>
+            <p>Icons, favicons, merch, vehicle detail</p>
+            <div class="download-row">
+              <a class="download" href="svg/as-mark-color.svg" download>SVG</a>
+              <a class="download" href="svg/as-favicon.svg" download>Favicon</a>
+            </div>
+          </div>
+        </div>
+        <div class="tile">
+          <div class="tile-stage bg-navy"><img class="lockup-h" src="svg/as-lockup-horizontal-dark.svg" alt="" /></div>
+          <div class="tile-meta">
+            <h3>Horizontal — reversed</h3>
+            <p>Dark UI chrome, night slides</p>
+            <div class="download-row"><a class="download" href="svg/as-lockup-horizontal-dark.svg" download>SVG</a></div>
+          </div>
+        </div>
+      </div>
+      <p class="small muted" style="margin-top:14px">
+        Wordmark is always a single color — Navy on light, Paper/white on dark. Only the symbol carries Signal.
+      </p>
+    </section>
+
+    <section class="section">
+      <div class="kicker">05 — Typography</div>
+      <h2>Geometric grotesk</h2>
+      <p>
+        Wordmark proxy: <strong>Inter</strong> / Montserrat Bold, all caps, tracking ~0.14em, two lines
+        <em>ALLROUND</em> / <em>SYSTEMS</em>. Product UI uses Inter 400–700.
+      </p>
+      <div class="tile" style="margin-top:14px">
+        <div class="tile-stage bg-paper" style="justify-content:flex-start;padding:32px">
+          <div class="wordmark-sample">ALLROUND<br />SYSTEMS</div>
+        </div>
+        <div class="tile-meta"><h3>Wordmark proxy</h3><p>Inter 700 · tracking +14%</p></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="kicker">06 — Color</div>
+      <h2>Navy structure, Paper space, Signal attention</h2>
+      <p>
+        Composition ratio target: <strong>60% Navy / 30% Paper / 10% Signal</strong>.
+        Signal is never used for running text.
+      </p>
+      <div class="grid grid-3" style="margin-top:18px">
+        <div class="swatch">
+          <div class="swatch-chip" style="background:#0B243B"></div>
+          <h3>Navy</h3>
+          <p><code>#0B243B</code> · structure, text, icons · 60%</p>
+        </div>
+        <div class="swatch">
+          <div class="swatch-chip" style="background:#F5F3ED"></div>
+          <h3>Paper</h3>
+          <p><code>#F5F3ED</code> · light surfaces · 30%</p>
+        </div>
+        <div class="swatch">
+          <div class="swatch-chip" style="background:#F19E38"></div>
+          <h3>Signal</h3>
+          <p><code>#F19E38</code> · accent only · 10%</p>
+        </div>
+        <div class="swatch">
+          <div class="swatch-chip" style="background:#5A6570"></div>
+          <h3>Slate</h3>
+          <p><code>#5A6570</code> · secondary text</p>
+        </div>
+        <div class="swatch">
+          <div class="swatch-chip" style="background:#C8CDD2"></div>
+          <h3>Mist</h3>
+          <p><code>#C8CDD2</code> · hairlines, disabled</p>
+        </div>
+        <div class="swatch">
+          <div class="swatch-chip" style="background:#071521"></div>
+          <h3>Night</h3>
+          <p><code>#071521</code> · dark-mode surface</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="kicker">07 — Clear space &amp; minimum sizes</div>
+      <h2>One stroke of air, always</h2>
+      <table>
+        <thead><tr><th>Asset</th><th>Digital minimum</th><th>Print minimum</th></tr></thead>
+        <tbody>
+          <tr><td>Symbol</td><td>16 px</td><td>5 mm</td></tr>
+          <tr><td>Horizontal lockup</td><td>120 px</td><td>28 mm</td></tr>
+          <tr><td>Stacked lockup</td><td>72 px</td><td>18 mm</td></tr>
+        </tbody>
+      </table>
+      <p class="small muted" style="margin-top:12px">
+        Clear space equals one monogram stroke width on all sides. Nothing enters the ring gaps.
+      </p>
+    </section>
+
+    <section class="section">
+      <div class="kicker">08 — Scale</div>
+      <h2>Same geometry at every size</h2>
+      <div class="scale-strip" style="margin-top:14px">
+        <div class="scale-item"><img src="svg/as-mark-color.svg" width="96" height="96" alt="" /><span>96 px</span></div>
+        <div class="scale-item"><img src="svg/as-mark-color.svg" width="64" height="64" alt="" /><span>64 px</span></div>
+        <div class="scale-item"><img src="svg/as-mark-color.svg" width="32" height="32" alt="" /><span>32 px</span></div>
+        <div class="scale-item"><img src="svg/as-mark-color.svg" width="24" height="24" alt="" /><span>24 px</span></div>
+        <div class="scale-item"><img src="svg/as-mark-color.svg" width="16" height="16" alt="" /><span>16 px</span></div>
+        <div class="scale-item"><img src="svg/as-app-icon.svg" width="64" height="64" alt="" style="border-radius:14px" /><span>App icon</span></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="kicker">09 — Incorrect usage</div>
+      <h2>Never</h2>
+      <div class="grid grid-4" style="margin-top:18px">
+        <div class="tile">
+          <div class="tile-stage bg-paper">
+            <span class="badge">✕</span>
+            <img class="mark" src="svg/as-mark-color.svg" alt="" style="filter:hue-rotate(90deg)" />
+          </div>
+          <div class="tile-meta"><h3>Recolored</h3><p>Only approved variants</p></div>
+        </div>
+        <div class="tile">
+          <div class="tile-stage bg-paper">
+            <span class="badge">✕</span>
+            <img class="mark" src="svg/as-mark-color.svg" alt="" style="transform:rotate(90deg)" />
+          </div>
+          <div class="tile-meta"><h3>Rotated</h3><p>Keep upright</p></div>
+        </div>
+        <div class="tile">
+          <div class="tile-stage bg-paper">
+            <span class="badge">✕</span>
+            <img class="mark" src="svg/as-mark-color.svg" alt="" style="transform:scaleX(1.45)" />
+          </div>
+          <div class="tile-meta"><h3>Stretched</h3><p>Proportions locked</p></div>
+        </div>
+        <div class="tile">
+          <div class="tile-stage bg-paper">
+            <span class="badge">✕</span>
+            <img class="mark" src="svg/as-mark-color.svg" alt="" style="filter:drop-shadow(4px 6px 6px rgba(0,0,0,.45))" />
+          </div>
+          <div class="tile-meta"><h3>Effects</h3><p>No shadows or glows</p></div>
+        </div>
+      </div>
+      <ul class="rules dont" style="margin-top:18px">
+        <li>Fill or decorate the ring gaps</li>
+        <li>Put Signal orange on the wordmark</li>
+        <li>Outline the mark or convert strokes to thin hairlines</li>
+        <li>Place low-contrast navy on dark photography without the reversed variant</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <div class="kicker">10 — Assets &amp; naming</div>
+      <h2>File naming convention</h2>
+      <p><code>as-[asset]-[variant].[format]</code></p>
+      <table>
+        <thead><tr><th>File</th><th>Use</th></tr></thead>
+        <tbody>
+          <tr><td><code>svg/as-mark-*.svg</code></td><td>Vector masters</td></tr>
+          <tr><td><code>svg/as-lockup-horizontal-*.svg</code></td><td>Default lockups</td></tr>
+          <tr><td><code>svg/as-lockup-stacked-*.svg</code></td><td>Stacked lockups</td></tr>
+          <tr><td><code>svg/as-app-icon.svg</code></td><td>Social / app tile</td></tr>
+          <tr><td><code>svg/as-favicon.svg</code></td><td>Browser favicon</td></tr>
+          <tr><td><code>tokens.css</code></td><td>Brand color tokens</td></tr>
+        </tbody>
+      </table>
+      <p class="small muted" style="margin-top:14px">
+        Pattern inspired by the
+        <a href="https://ladstv.github.io/ladstv-brand/" target="_blank" rel="noreferrer">LADS TV brand kit</a>.
+        Raster PNG exports can be generated from these SVGs at 512 / 1024 as needed.
+      </p>
+    </section>
+  </div>
+</body>
+</html>
