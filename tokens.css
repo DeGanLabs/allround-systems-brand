@@ -1,6 +1,7 @@
 :root {
+  /* Allround Systems — independent brand tokens */
   --as-navy: #0B243B;
-  --as-orange: #F19E38;
+  --as-orange: #F19E38; /* Signal — arrow tip accent only */
   --as-paper: #F5F3ED;
   --as-black: #000000;
   --as-white: #FFFFFF;
